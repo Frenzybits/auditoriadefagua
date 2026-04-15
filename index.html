@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría Digital — ADEFAGUA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #0b24fb;
+  --blue-dim: rgba(11,36,251,0.15);
+  --blue-glow: rgba(11,36,251,0.4);
+  --bg: #07070d;
+  --surface: #0e0e18;
+  --surface2: #141422;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #eeeef5;
+  --muted: #8888a0;
+  --red: #ff4444;
+  --red-dim: rgba(255,68,68,0.12);
+  --amber: #f59f0a;
+  --amber-dim: rgba(245,159,10,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(7,7,13,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem; height: 56px;
+}
+.nav-brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); }
+.nav-links { display: flex; gap: 0; }
+.nav-links a {
+  font-size: 12px; color: var(--muted); text-decoration: none;
+  padding: 0 14px; height: 56px; display: flex; align-items: center;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--text); border-bottom-color: var(--blue); }
+.nav-date { font-size: 11px; color: var(--muted); }
+
+/* HERO */
+.hero {
+  padding: 120px 2.5rem 80px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -200px; left: -100px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(11,36,251,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-label {
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--blue); font-family: 'Syne', sans-serif; font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-label::before { content: ''; width: 24px; height: 1px; background: var(--blue); }
+.hero h1 {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 1.0; letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+.hero h1 span { color: var(--blue); }
+.hero-meta { display: flex; gap: 2rem; margin-bottom: 3.5rem; }
+.hero-meta-item { font-size: 13px; color: var(--muted); }
+.hero-meta-item strong { color: var(--text); display: block; font-size: 14px; font-weight: 500; }
+
+/* SCORE GRID */
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 1100px;
+}
+.score-cell {
+  background: var(--surface);
+  padding: 1.5rem 1.2rem;
+  text-align: center;
+  position: relative;
+  transition: background 0.2s;
+}
+.score-cell:hover { background: var(--surface2); }
+.score-cell-label {
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1rem; font-family: 'Syne', sans-serif;
+}
+.score-ring { position: relative; width: 80px; height: 80px; margin: 0 auto 0.8rem; }
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring-num {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700;
+}
+.score-verdict { font-size: 11px; color: var(--muted); font-weight: 500; }
+.score-verdict.critical { color: var(--red); }
+.score-verdict.warning { color: var(--amber); }
+.score-verdict.moderate { color: #f59f0a; }
+
+/* OVERALL BADGE */
+.overall-score {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--blue-dim); border: 1px solid var(--blue-glow);
+  border-radius: 100px; padding: 8px 20px 8px 8px;
+  margin-bottom: 2rem;
+}
+.overall-score-num {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem;
+  background: var(--blue); color: #fff;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.overall-score-text { font-size: 14px; }
+.overall-score-text strong { display: block; font-weight: 500; }
+.overall-score-text span { font-size: 12px; color: var(--muted); }
+
+/* SECTIONS */
+section { padding: 5rem 2.5rem; max-width: 1100px; margin: 0 auto; }
+.section-header { margin-bottom: 3rem; }
+.section-tag {
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--blue); font-family: 'Syne', sans-serif; font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+.section-title {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.15;
+  margin-bottom: 0.8rem;
+}
+.section-desc { font-size: 15px; color: var(--muted); max-width: 600px; line-height: 1.7; }
+
+/* SCORE BADGE INLINE */
+.score-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+  padding: 4px 12px 4px 4px; border-radius: 100px;
+}
+.score-badge .dot-score {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.sb-red { background: var(--red-dim); border: 1px solid rgba(255,68,68,0.3); color: var(--red); }
+.sb-red .dot-score { background: var(--red); }
+.sb-amber { background: var(--amber-dim); border: 1px solid rgba(245,159,10,0.3); color: var(--amber); }
+.sb-amber .dot-score { background: var(--amber); }
+.sb-moderate { background: rgba(255,200,0,0.1); border: 1px solid rgba(255,200,0,0.3); color: #ffc800; }
+.sb-moderate .dot-score { background: #ffc800; }
+
+/* ISSUE CARDS */
+.issues { display: flex; flex-direction: column; gap: 1px; }
+.issue-card {
+  background: var(--surface);
+  border-left: 3px solid transparent;
+  padding: 1.25rem 1.5rem;
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: 1.25rem; align-items: start;
+  transition: background 0.2s;
+  position: relative;
+}
+.issue-card:first-child { border-radius: 12px 12px 0 0; }
+.issue-card:last-child { border-radius: 0 0 12px 12px; }
+.issue-card:hover { background: var(--surface2); }
+.issue-card.sev-critical { border-left-color: var(--red); }
+.issue-card.sev-high { border-left-color: var(--amber); }
+.issue-card.sev-medium { border-left-color: #ffc800; }
+.issue-card.sev-positive { border-left-color: var(--green); }
+.sev-tag {
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  padding: 3px 8px; border-radius: 4px; white-space: nowrap; margin-top: 2px;
+}
+.st-critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,68,68,0.25); }
+.st-high { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,159,10,0.25); }
+.st-medium { background: rgba(255,200,0,0.1); color: #ffc800; border: 1px solid rgba(255,200,0,0.25); }
+.st-positive { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+.issue-body { }
+.issue-title { font-size: 14px; font-weight: 500; margin-bottom: 5px; line-height: 1.4; }
+.issue-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.issue-fix {
+  font-size: 12px; margin-top: 8px;
+  color: #7090ff; background: rgba(11,36,251,0.1);
+  border: 1px solid rgba(11,36,251,0.25);
+  padding: 4px 10px; border-radius: 6px; display: inline-block;
+  font-weight: 500;
+}
+.issue-fix::before { content: '→ '; }
+.issue-impact { text-align: right; }
+.impact-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.impact-val { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; }
+
+/* PERFORMANCE METRICS */
+.perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; }
+.perf-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.5rem;
+  position: relative; overflow: hidden;
+}
+.perf-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  border-radius: 0 0 12px 12px;
+}
+.perf-card.mobile::after { background: var(--amber); }
+.perf-card.desktop::after { background: var(--amber); }
+.perf-device { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-family: 'Syne', sans-serif; margin-bottom: 0.5rem; }
+.perf-score { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3.5rem; line-height: 1; margin-bottom: 0.5rem; }
+.perf-score.bad { color: var(--red); }
+.perf-score.needs { color: var(--amber); }
+.perf-score.good { color: var(--green); }
+.perf-label { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
+.perf-bar-wrap { background: rgba(255,255,255,0.06); border-radius: 4px; height: 6px; overflow: hidden; }
+.perf-bar { height: 100%; border-radius: 4px; transition: width 1.5s cubic-bezier(0.4,0,0.2,1); }
+.perf-bar.red { background: linear-gradient(90deg, var(--red), #ff7070); }
+.perf-bar.amber { background: linear-gradient(90deg, var(--amber), #fcd34d); }
+.cwv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.cwv-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.2rem;
+}
+.cwv-name { font-size: 11px; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.cwv-val { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.25rem; }
+.cwv-val.bad { color: var(--red); }
+.cwv-val.needs { color: var(--amber); }
+.cwv-desc { font-size: 12px; color: var(--muted); }
+
+/* DR CARD */
+.dr-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 2rem;
+  display: grid; grid-template-columns: 180px 1fr; gap: 2rem;
+  align-items: center; margin-bottom: 1.5rem;
+}
+.dr-gauge { text-align: center; }
+.dr-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 4rem; color: var(--red); line-height: 1; }
+.dr-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.dr-bar-wrap { margin-top: 12px; background: rgba(255,255,255,0.06); border-radius: 4px; height: 6px; }
+.dr-bar { width: 2.3%; height: 100%; background: var(--red); border-radius: 4px; }
+.dr-context p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.dr-context strong { color: var(--text); font-weight: 500; }
+
+/* TOXIC LINKS */
+.toxic-block {
+  background: var(--red-dim); border: 1px solid rgba(255,68,68,0.2);
+  border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+  display: flex; gap: 1.5rem; align-items: flex-start;
+}
+.toxic-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--red); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.toxic-text h4 { font-size: 15px; font-weight: 500; color: var(--red); margin-bottom: 6px; }
+.toxic-text p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ROADMAP */
+.roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.road-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.road-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.road-phase {
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  font-family: 'Syne', sans-serif; font-weight: 700;
+}
+.road-time { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.road-badge {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; font-family: 'Syne', sans-serif;
+  flex-shrink: 0;
+}
+.rb-red { background: var(--red); color: #fff; }
+.rb-amber { background: var(--amber); color: #000; }
+.rb-blue { background: var(--blue); color: #fff; }
+.road-items { padding: 1rem 1.25rem; }
+.road-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px; line-height: 1.4;
+}
+.road-item:last-child { border-bottom: none; }
+.road-num { font-size: 11px; color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 600; width: 18px; flex-shrink: 0; padding-top: 1px; }
+
+/* STATS BAR */
+.stats-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  margin-bottom: 3rem;
+}
+.stat-cell {
+  background: var(--surface); padding: 1.5rem;
+}
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-family: 'Syne', sans-serif; margin-bottom: 0.6rem; }
+.stat-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 2rem; line-height: 1; margin-bottom: 0.25rem; }
+.stat-sub { font-size: 12px; color: var(--muted); }
+
+/* DIVIDER */
+.divider { width: 100%; height: 1px; background: var(--border); }
+
+/* CATEGORY HEADER */
+.cat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.cat-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+.cat-count { font-size: 12px; color: var(--muted); }
+
+/* FOOTER */
+footer {
+  text-align: center; padding: 3rem 2.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted); font-size: 12px;
+}
+footer strong { color: var(--blue); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+.hero > * { animation: fadeUp 0.6s ease both; }
+.hero > *:nth-child(2) { animation-delay: 0.05s; }
+.hero > *:nth-child(3) { animation-delay: 0.1s; }
+.hero > *:nth-child(4) { animation-delay: 0.15s; }
+.hero > *:nth-child(5) { animation-delay: 0.2s; }
+.hero > *:nth-child(6) { animation-delay: 0.25s; }
+
+/* ISSUE NUMBERED */
+.issue-num {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  color: var(--muted); padding-top: 2px; width: 20px; flex-shrink: 0;
+}
+
+/* HIGHLIGHT BOX */
+.highlight-box {
+  background: var(--blue-dim); border: 1px solid var(--blue-glow);
+  border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+}
+.highlight-box h4 { font-size: 14px; font-weight: 500; color: #a0b4ff; margin-bottom: 6px; }
+.highlight-box p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* SCROLL INDICATOR */
+.scroll-progress {
+  position: fixed; top: 56px; left: 0; height: 2px;
+  background: var(--blue); z-index: 101; transition: width 0.1s;
+  width: 0%;
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="progress"></div>
+
+<nav>
+  <div class="nav-brand">Auditoría Digital</div>
+  <div class="nav-links">
+    <a href="#ux">UX</a>
+    <a href="#diseno">Diseño</a>
+    <a href="#rendimiento">Rendimiento</a>
+    <a href="#seo-on">SEO On-Page</a>
+    <a href="#seo-off">SEO Off-Page</a>
+    <a href="#info">Información</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <div class="nav-date">Abril 2026</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" style="border-bottom: 1px solid var(--border);">
+  <div class="hero-label">Reporte de Auditoría Web Completa</div>
+  <h1>adefagua<span>.</span>org</h1>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><strong>Asociación para el Desarrollo de la Familia Guatemalteca</strong>Organización sin fines de lucro · Salud Mental</div>
+    <div class="hero-meta-item"><strong>6 Áreas de Análisis</strong>UX · Diseño · Rendimiento · SEO On & Off Page · Información</div>
+    <div class="hero-meta-item"><strong>Plataforma</strong>WordPress · Hosting propio · Sin CDN</div>
+  </div>
+
+  <div class="overall-score" style="margin-bottom: 2.5rem;">
+    <div class="overall-score-num">4.1</div>
+    <div class="overall-score-text">
+      <strong>Puntaje Global</strong>
+      <span>Requiere intervención urgente en múltiples áreas críticas</span>
+    </div>
+  </div>
+
+  <div class="score-grid">
+    <div class="score-cell">
+      <div class="score-cell-label">UX</div>
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#f59f0a" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="110" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-num" style="color:#f59f0a;">5.5</div>
+      </div>
+      <div class="score-verdict warning">Deficiente</div>
+    </div>
+    <div class="score-cell">
+      <div class="score-cell-label">Diseño Web</div>
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#ff4444" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="121" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-num" style="color:#ff4444;">4</div>
+      </div>
+      <div class="score-verdict critical">Básico</div>
+    </div>
+    <div class="score-cell">
+      <div class="score-cell-label">Rendimiento</div>
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#ff4444" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="120" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-num" style="color:#ff4444;">4.5</div>
+      </div>
+      <div class="score-verdict critical">Lento</div>
+    </div>
+    <div class="score-cell">
+      <div class="score-cell-label">SEO On-Page</div>
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#ff4444" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="140" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-num" style="color:#ff4444;">3</div>
+      </div>
+      <div class="score-verdict critical">Crítico</div>
+    </div>
+    <div class="score-cell">
+      <div class="score-cell-label">SEO Off-Page</div>
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#ff4444" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="157" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-num" style="color:#ff4444;">2</div>
+      </div>
+      <div class="score-verdict critical">Muy Bajo</div>
+    </div>
+    <div class="score-cell">
+      <div class="score-cell-label">Info al Cliente</div>
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#ffc800" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="100" stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-num" style="color:#ffc800;">6</div>
+      </div>
+      <div class="score-verdict moderate">Incompleto</div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div style="padding: 3rem 2.5rem 0; max-width: 1100px; margin: 0 auto;">
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <div class="stat-label">Domain Rating</div>
+      <div class="stat-val" style="color: var(--red);">2.3</div>
+      <div class="stat-sub">Escala 0–100 · Extremadamente bajo</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Velocidad Mobile</div>
+      <div class="stat-val" style="color: var(--red);">45<span style="font-size: 1rem; color: var(--muted);">/100</span></div>
+      <div class="stat-sub">PageSpeed Insights · Necesita mejora</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Velocidad Desktop</div>
+      <div class="stat-val" style="color: var(--amber);">61<span style="font-size: 1rem; color: var(--muted);">/100</span></div>
+      <div class="stat-sub">PageSpeed Insights · Necesita mejora</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Links Tóxicos</div>
+      <div class="stat-val" style="color: var(--red);">Alto</div>
+      <div class="stat-sub">Perfil de backlinks dañado · Sin disavow</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ UX ============ -->
+<section id="ux">
+  <div class="section-header">
+    <div class="section-tag">01 — Experiencia de Usuario</div>
+    <h2 class="section-title">El sitio no está diseñado<br>para convertir visitantes</h2>
+    <p class="section-desc">Problemas estructurales de navegación, flujos rotos y ausencia de jerarquía de conversión generan abandono antes de que el usuario encuentre lo que busca.</p>
+  </div>
+  <div class="cat-header">
+    <div class="cat-title">Hallazgos UX <span class="score-badge sb-amber" style="margin-left: 10px;"><span class="dot-score" style="background:var(--amber);">5.5</span> Deficiente</span></div>
+    <div class="cat-count">6 hallazgos · 3 críticos · 2 altos · 1 positivo</div>
+  </div>
+  <div class="issues">
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Crítico</span>
+      <div class="issue-body">
+        <div class="issue-title">Doble slider en homepage — el patrón anti-UX más costoso</div>
+        <div class="issue-desc">Hay dos carruseles encadenados: un hero slider con 4 slides y un segundo slider para secciones de servicios. Los sliders ocultan información crítica detrás de rotación automática, tienen tasas de interacción inferiores al 1% según estudios de eye-tracking, y cada slide compite por la atención con mensajes contradictorios. El resultado: el visitante no sabe a qué se dedica ADEFAGUA ni qué debe hacer. El primer slide dice "Artículos de valor", el segundo "Salud mental para todos", el tercero "Donaciones" — tres audiencias distintas en conflicto.</div>
+        <span class="issue-fix">Reemplazar ambos sliders con un hero estático de propuesta de valor única + 3 secciones visibles en el primer scroll</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--red);">Muy Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Crítico</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin CTA primario claro above-the-fold — pérdida masiva de conversión</div>
+        <div class="issue-desc">La zona visible al cargar (above-the-fold) no tiene un solo botón de acción dominante. El sitio presenta simultáneamente "Donar aquí" en la nav, 4 CTAs distintos en el slider rotando, y múltiples links en menú. Sin una jerarquía clara de conversión, el visitante en búsqueda de ayuda psicológica no identifica cómo dar el siguiente paso. Para una organización de salud mental, esta fricción es especialmente costosa porque el visitante puede estar en un momento de vulnerabilidad que requiere acción inmediata.</div>
+        <span class="issue-fix">Definir jerarquía: CTA primario "Solicitar una cita" + CTA secundario "Conoce nuestros servicios" únicamente en hero</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--red);">Muy Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Crítico</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin sistema de citas online — barrera de acceso inaceptable en 2026</div>
+        <div class="issue-desc">Una organización de salud mental sin agenda digital en 2026 obliga al usuario a llamar por teléfono o enviar un mensaje de WhatsApp para agendar. Esto es una barrera enorme para personas que buscan apoyo psicológico, especialmente adolescentes y adultos jóvenes que evitan el contacto telefónico. Además, las llamadas y mensajes no se pueden hacer a las 11pm cuando alguien más lo necesita. Cada hora sin booking online es potenciales consultas perdidas.</div>
+        <span class="issue-fix">Integrar Calendly o Cal.com (gratuito), vincularlo como CTA primario en homepage y en cada página de servicio</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--red);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Alto</span>
+      <div class="issue-body">
+        <div class="issue-title">Menú de navegación con 7 ítems + submenús extensos — carga cognitiva excesiva</div>
+        <div class="issue-desc">"Quiénes somos" contiene 6 subitems, "Nuestros servicios" contiene 7 subitems, "Actualidad" contiene 5 subitems. En mobile esto colapsa en un hamburger menu que requiere múltiples toques para llegar a cualquier destino. El visitante nuevo no puede entender la estructura del sitio de un vistazo. En Google Analytics de cualquier sitio similar, más del 60% del tráfico llega a homepage buscando 3 cosas: quiénes son, qué ofrecen y cómo contactarlos.</div>
+        <span class="issue-fix">Reducir a 4 ítems: Servicios · Sobre ADEFAGUA · Dona · Contacto. El contenido adicional va en footers y páginas internas</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Alto</span>
+      <div class="issue-body">
+        <div class="issue-title">Contadores de logros renderizan en "0" — Cumulative Layout Shift y pérdida de credibilidad</div>
+        <div class="issue-desc">Los números animados de impacto ("5 clínicas", "+10,000 sesiones", "+8 años") cargan visualmente como "0" hasta que JavaScript termina de ejecutarse. Esto genera dos problemas: (1) CLS — el layout "salta" cuando los números cambian, penalizando las métricas de Core Web Vitals de Google; (2) usuarios que hacen scroll rápido o tienen JS lento ven valores de cero, lo cual destruye la credibilidad de la sección de logros en el momento exacto en que debería generar confianza.</div>
+        <span class="issue-fix">Renderizar el valor final directamente en HTML. La animación de conteo se activa solo si IntersectionObserver detecta que el elemento está en viewport y JS está disponible</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Medio</div>
+      </div>
+    </div>
+    <div class="issue-card sev-positive">
+      <span class="sev-tag st-positive">Positivo</span>
+      <div class="issue-body">
+        <div class="issue-title">Botón de WhatsApp flotante — canal correcto para el mercado guatemalteco</div>
+        <div class="issue-desc">El acceso directo a WhatsApp siempre visible es la decisión correcta para el público objetivo. WhatsApp es el canal de comunicación dominante en Guatemala y reduce la fricción de contacto inicial de forma significativa.</div>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Estado</div>
+        <div class="impact-val" style="color: var(--green);">Mantener</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ DISEÑO ============ -->
+<section id="diseno">
+  <div class="section-header">
+    <div class="section-tag">02 — Diseño Web</div>
+    <h2 class="section-title">Diseño básico que no genera<br>confianza para salud mental</h2>
+    <p class="section-desc">Para una organización de salud mental, el diseño es directamente proporcional a la confianza del consultante. Un sitio visualmente descuidado comunica: "no somos profesionales". ADEFAGUA tiene credenciales reales que su diseño no refleja.</p>
+  </div>
+  <div class="highlight-box" style="margin-bottom: 2rem;">
+    <h4>El problema de fondo: ausencia de identidad visual aplicada al digital</h4>
+    <p>El sitio usa un template de WordPress con personalización mínima. No existe un sistema de diseño definido: los espaciados son inconsistentes entre secciones, la tipografía no tiene jerarquía clara, y los colores fuera del logo no están definidos como sistema. El resultado es un sitio que se ve como una instalación por defecto, no como la interfaz digital de una organización con 8 años de trayectoria y más de 30 patrocinadores.</p>
+  </div>
+  <div class="cat-header">
+    <div class="cat-title">Hallazgos de Diseño <span class="score-badge sb-red" style="margin-left: 10px;"><span class="dot-score">4</span> Básico</span></div>
+    <div class="cat-count">7 hallazgos · 4 críticos · 2 altos · 1 positivo</div>
+  </div>
+  <div class="issues">
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Urgente</span>
+      <div class="issue-body">
+        <div class="issue-title">Logo de Revlon incrustado en el slider de servicios</div>
+        <div class="issue-desc">El archivo "logo-revlon-blanco.png" aparece dentro del segundo slider de secciones. Es un asset residual de una plantilla demo de WordPress que nunca fue eliminado. Ante cualquier visitante institucional — donante corporativo, organismo internacional, aliado potencial — este detalle destruye la percepción de profesionalismo al instante. Es equivalente a tener un nombre equivocado en la presentación de un cliente.</div>
+        <span class="issue-fix">Eliminar de inmediato desde el editor de WordPress — prioridad máxima</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Urgencia</div>
+        <div class="impact-val" style="color: var(--red);">Inmediata</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Crítico</span>
+      <div class="issue-body">
+        <div class="issue-title">33 logos de patrocinadores sin sistema visual — ruido que daña más que comunica</div>
+        <div class="issue-desc">Al final de la página existe un grid de logos de patrocinadores nombrados literalmente "1.png" hasta "33.png". Los problemas: alturas inconsistentes (algunos logos se ven desproporcionados), sin fondo neutro controlado (los logos tienen fondos mixtos que chocan entre sí), sin organización en categorías (patrocinadores vs. aliados estratégicos vs. sponsors de evento), y sin hover state ni link. Una sección que debería ser una señal de confianza poderosa termina viéndose como una colección caótica.</div>
+        <span class="issue-fix">Grid uniforme con max-height: 48px, fondo gris claro #f5f5f5, 3 categorías separadas. Cada logo debería linkear al sitio del sponsor</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--red);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Crítico</span>
+      <div class="issue-body">
+        <div class="issue-title">Íconos genéricos de stock en sección de servicios — no generan confianza emocional</div>
+        <div class="issue-desc">Los 6 servicios de psicología están representados por íconos planos y genéricos (clipart-style). Para una persona buscando apoyo por ansiedad, depresión o duelo, estos íconos no generan ninguna conexión emocional ni credibilidad profesional. La categoría de salud mental exige calidez visual, humanidad y transmitir seguridad. Los sitios que mejor convierten en esta categoría usan fotografía real de terapeutas, espacios seguros y personas reales.</div>
+        <span class="issue-fix">Fotografía del equipo de psicólogos reales y de las clínicas. Si no es posible a corto plazo: ilustraciones cálidas custom, nunca clipart</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--red);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Crítico</span>
+      <div class="issue-body">
+        <div class="issue-title">Múltiples H1 en la misma página — error de jerarquía tipográfica y SEO simultáneo</div>
+        <div class="issue-desc">Cada slide del hero genera su propio elemento H1 en el DOM: "Artículos de valor", "Salud mental para todos", "Apoyanos con tu donativo", "Conoce nuestros servicios". Semánticamente, el H1 debe definir el tema central de la página. Con 4 H1s simultáneos, la jerarquía tipográfica se rompe completamente y Google no puede determinar el tema principal de la página.</div>
+        <span class="issue-fix">Un único H1 de contenido real. Los textos de slides deben ser H2, H3 o párrafos. Considerar aria-live para accesibilidad</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--red);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Alto</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin design system — inconsistencia visual entre páginas</div>
+        <div class="issue-desc">No existe un sistema de diseño aplicado: los espaciados entre secciones varían sin patrón definido, los botones tienen estilos diferentes según la página, los tamaños de fuente no siguen una escala tipográfica coherente. Las páginas internas de servicios se ven visualmente distintas entre sí. Esta inconsistencia comunica falta de profesionalismo y dificulta futuras actualizaciones del sitio.</div>
+        <span class="issue-fix">Definir design tokens en CSS: escala tipográfica (h1–h6), paleta de colores (primario, secundario, acento), espaciados (8px base grid), componentes reutilizables</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Medio</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Alto</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin testimoniales ni casos de éxito prominentes en homepage</div>
+        <div class="issue-desc">Existe una página de "Casos de éxito" en el menú pero ningún testimonio aparece en la homepage. En servicios de salud mental, la prueba social es el factor de conversión #1. Un visitante que considera buscar apoyo psicológico necesita ver que otras personas en situaciones similares encontraron ayuda real. La sección "Lo más reciente" en homepage muestra posts del blog, cuando debería mostrar al menos 2–3 testimoniales reales (anonimizados si es necesario).</div>
+        <span class="issue-fix">Sección de testimoniales en homepage antes del fold. Formato: foto + nombre + problema + resultado. Opcional: video testimonio</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-positive">
+      <span class="sev-tag st-positive">Positivo</span>
+      <div class="issue-body">
+        <div class="issue-title">Sitio bilingüe ES/EN con estructura de URLs correcta</div>
+        <div class="issue-desc">La versión en inglés (/en/) está correctamente separada por URL, no por subdomain ni parámetro. Esto es la estructura correcta para SEO internacional y cubre la audiencia de la diáspora guatemalteca en EE.UU. — un segmento con capacidad de donación significativamente mayor.</div>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Estado</div>
+        <div class="impact-val" style="color: var(--green);">Optimizar</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ RENDIMIENTO ============ -->
+<section id="rendimiento">
+  <div class="section-header">
+    <div class="section-tag">03 — Rendimiento Técnico</div>
+    <h2 class="section-title">45/100 en mobile — la mitad<br>de los visitantes se van antes de cargar</h2>
+    <p class="section-desc">Un score de 45 en PageSpeed mobile significa que la experiencia para la mayoría de usuarios guatemaltecos con 4G es frustrante. Google penaliza directamente estos scores en rankings orgánicos.</p>
+  </div>
+  <div class="perf-grid">
+    <div class="perf-card mobile">
+      <div class="perf-device">Mobile · PageSpeed Insights</div>
+      <div class="perf-score bad">45</div>
+      <div class="perf-label">Necesita mejora urgente — umbral "bueno" es 90+</div>
+      <div class="perf-bar-wrap"><div class="perf-bar red" style="width: 45%;"></div></div>
+    </div>
+    <div class="perf-card desktop">
+      <div class="perf-device">Desktop · PageSpeed Insights</div>
+      <div class="perf-score needs">61</div>
+      <div class="perf-label">Insuficiente — incluso desktop no alcanza el mínimo aceptable</div>
+      <div class="perf-bar-wrap"><div class="perf-bar amber" style="width: 61%;"></div></div>
+    </div>
+  </div>
+  <div class="cwv-grid">
+    <div class="cwv-card">
+      <div class="cwv-name">LCP — Largest Contentful Paint</div>
+      <div class="cwv-val bad">~4–6s</div>
+      <div class="cwv-desc">Estimado. El slider hero es el elemento LCP con imágenes de alto peso sin preload ni WebP. Google requiere &lt;2.5s.</div>
+    </div>
+    <div class="cwv-card">
+      <div class="cwv-name">CLS — Cumulative Layout Shift</div>
+      <div class="cwv-val bad">Alto</div>
+      <div class="cwv-desc">Los 33 logos de sponsors sin dimensiones definidas y los contadores animados desde cero generan saltos de layout significativos.</div>
+    </div>
+    <div class="cwv-card">
+      <div class="cwv-name">INP — Interaction to Next Paint</div>
+      <div class="cwv-val needs">Degradado</div>
+      <div class="cwv-desc">Scripts de 4 plataformas de pago cargando en el hilo principal aumentan el tiempo de respuesta a interacciones del usuario.</div>
+    </div>
+  </div>
+  <div class="cat-header">
+    <div class="cat-title">Causas del Bajo Rendimiento</div>
+    <div class="cat-count">5 problemas técnicos identificados</div>
+  </div>
+  <div class="issues">
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">LCP</span>
+      <div class="issue-body">
+        <div class="issue-title">Slider hero con 4 imágenes pesadas como elemento above-the-fold</div>
+        <div class="issue-desc">El Largest Contentful Paint del sitio es casi con certeza una imagen del slider hero. Sin preload de la imagen principal, sin conversión a formato WebP y con el slider cargando 4 imágenes en background, el navegador no puede renderizar el contenido principal rápidamente. Cada imagen del slider suma al tiempo de carga inicial aunque el usuario solo vea la primera. Eliminar el slider sería la mejora de rendimiento con mayor impacto de todas las recomendaciones de este reporte.</div>
+        <span class="issue-fix">Eliminar slider → imagen hero estática en WebP + &lt;link rel="preload" as="image"&gt; en head</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Ganancia est.</div>
+        <div class="impact-val" style="color: var(--green);">+15–20pts</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Peso</span>
+      <div class="issue-body">
+        <div class="issue-title">Video .mp4 de alta resolución alojado en servidor propio sin streaming</div>
+        <div class="issue-desc">El video de la directora está servido como archivo .mp4 directamente desde wp-content. Sin streaming adaptativo (HLS/DASH), el navegador intenta descargar el video completo al cargar la página, bloqueando otros recursos críticos. Un video de 2–3 minutos sin comprimir puede pesar 150–500MB. Esto es el segundo mayor contribuyente al LCP y al tiempo de carga total.</div>
+        <span class="issue-fix">Subir a YouTube (privado o unlisted) y usar embed con loading="lazy". Alternativa: poster image con play-on-click que carga el video solo cuando el usuario interactúa</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Ganancia est.</div>
+        <div class="impact-val" style="color: var(--green);">+8–12pts</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Imágenes</span>
+      <div class="issue-body">
+        <div class="issue-title">33+ logos PNG sin optimizar, sin dimensiones definidas y sin lazy load</div>
+        <div class="issue-desc">Los logos de patrocinadores (1.png – 33.png) son archivos PNG posiblemente en resolución original de diseño. Sin width/height explícitos en el HTML, el navegador no puede reservar espacio hasta descargar cada imagen, causando CLS. Sin lazy loading, se descargan todos al cargar la página aunque estén al final del scroll. La suma de 33 logos no optimizados puede representar 2–5MB adicionales de peso de página.</div>
+        <span class="issue-fix">Convertir todos a WebP, definir width y height en HTML, añadir loading="lazy". Considerar un sprite CSS para logos monocromáticos</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Ganancia est.</div>
+        <div class="impact-val" style="color: var(--green);">+5–8pts</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">CDN</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin CDN — todos los assets servidos desde un único origen</div>
+        <div class="issue-desc">El sitio sirve todos sus recursos (CSS, JS, imágenes, video) desde el mismo servidor de origen. Para visitantes en el interior de Guatemala o desde EE.UU. (diáspora guatemalteca, potenciales donantes internacionales), la latencia aumenta considerablemente. Sin CDN, tampoco hay compresión Brotli automática, cache de edge, ni protección básica contra tráfico anormal.</div>
+        <span class="issue-fix">Activar Cloudflare plan gratuito en menos de 30 minutos. Incluye CDN global, compresión automática, caché y mejora estimada de 10–20% en TTFB</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Esfuerzo</div>
+        <div class="impact-val" style="color: var(--green);">Bajo</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Scripts</span>
+      <div class="issue-body">
+        <div class="issue-title">Scripts de 4 plataformas de pago cargando en todas las páginas</div>
+        <div class="issue-desc">xpresspago.com, payzen.lat, paypal.com y preciousbloodsistersdayton.org cargan sus scripts de terceros en cada página del sitio, incluyendo páginas que no tienen ningún botón de donación. Cada script de terceros bloquea el hilo principal de JavaScript, aumentando el INP y retrasando la interactividad.</div>
+        <span class="issue-fix">Cargar scripts de pago únicamente on-demand: cuando el usuario hace clic en "Donar" se inyecta el script. Eliminar de la carga global de páginas</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Ganancia est.</div>
+        <div class="impact-val" style="color: var(--green);">+5pts INP</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SEO ON-PAGE ============ -->
+<section id="seo-on">
+  <div class="section-header">
+    <div class="section-tag">04 — SEO On-Page</div>
+    <h2 class="section-title">El sitio es prácticamente invisible<br>para los motores de búsqueda</h2>
+    <p class="section-desc">Los errores técnicos de SEO on-page impiden que Google entienda de qué trata el sitio, para quién es y cuál es su contenido principal. Con un title tag duplicado y múltiples H1, el punto de partida es crítico.</p>
+  </div>
+  <div class="cat-header">
+    <div class="cat-title">Hallazgos SEO On-Page <span class="score-badge sb-red" style="margin-left: 10px;"><span class="dot-score">3</span> Crítico</span></div>
+    <div class="cat-count">7 hallazgos · 4 críticos · 3 altos</div>
+  </div>
+  <div class="issues">
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Title Tag</span>
+      <div class="issue-body">
+        <div class="issue-title">Title tag: "adefagua – adefagua" — el error on-page más grave del sitio</div>
+        <div class="issue-desc">El title tag es el factor on-page individual más importante para SEO. El actual repite el nombre de marca sin ninguna palabra clave, sin descripción del servicio, sin ubicación geográfica. Cuando alguien en Guatemala busca "psicólogo Guatemala", "terapia psicológica guatemala ciudad" o "salud mental accesible Guatemala", este sitio tiene cero relevancia de señal en su title. Además, el title aparece como texto en los resultados de búsqueda de Google — "adefagua – adefagua" no genera ningún click orgánico de un usuario que no conoce la marca.</div>
+        <span class="issue-fix">Propuesta: "ADEFAGUA | Psicología accesible en Guatemala — Atención de salud mental desde 2017"</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto SEO</div>
+        <div class="impact-val" style="color: var(--red);">Crítico</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Estructura</span>
+      <div class="issue-body">
+        <div class="issue-title">4 elementos H1 simultáneos en homepage — señal de contenido incoherente para Google</div>
+        <div class="issue-desc">El slider genera 4 H1 en el mismo documento HTML: "Artículos de valor", "Salud mental para todos", "Apoyanos con tu donativo" y "Conoce nuestros servicios". El estándar HTML5 permite técnicamente múltiples H1, pero Google los usa para determinar el tema de la página. Con 4 temas en conflicto, el algoritmo tiene dificultades para asignar relevancia temática. La página no puede rankear bien para ningún término cuando su H1 no puede decidir de qué trata.</div>
+        <span class="issue-fix">Un H1 principal: "Atención psicológica accesible para guatemaltecos" — en el hero, siempre visible, sin rotación. Slides usan aria-hidden o H2</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto SEO</div>
+        <div class="impact-val" style="color: var(--red);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Schema</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin structured data / Schema markup — oportunidad de rich snippets perdida</div>
+        <div class="issue-desc">El sitio no tiene ningún tipo de datos estructurados en JSON-LD. Los tipos relevantes ausentes: Organization (datos básicos de la ONG), MedicalOrganization (señal de autoridad médica), 5× LocalBusiness (una por cada clínica física, con dirección, horarios, teléfono — crítico para búsquedas locales de Google Maps), FAQPage (las preguntas frecuentes podrían aparecer como rich snippet en resultados), y BreadcrumbList. Sin Schema, el sitio no puede obtener ningún resultado enriquecido en Google SERP.</div>
+        <span class="issue-fix">Implementar JSON-LD en head: MedicalOrganization + 5× LocalBusiness con GeoCoordinates + FAQPage. Total: ~3–4 horas de implementación</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Oportunidad</div>
+        <div class="impact-val" style="color: var(--amber);">Alta</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Imágenes</span>
+      <div class="issue-body">
+        <div class="issue-title">Alt text ausente o genérico en la mayoría de imágenes del sitio</div>
+        <div class="issue-desc">Los logos de aliados (a1.png, a2.png, a3.png, alpar.png), los 33 logos de patrocinadores (1.png–33.png), y los íconos de servicios no tienen alt text descriptivo. Las imágenes del slider usan paths de caché con hashes como nombre. Google no puede leer imágenes — el alt text es la única forma que tiene el crawler de entender el contenido visual. Para accesibilidad, usuarios de lectores de pantalla no reciben ninguna información de estas secciones.</div>
+        <span class="issue-fix">Alt descriptivo con keywords naturales en imágenes de contenido (ej: "Logo de ALPAR, aliado de ADEFAGUA en salud mental"). Alt="" (vacío) en imágenes puramente decorativas</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Medio-Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Hreflang</span>
+      <div class="issue-body">
+        <div class="issue-title">Hreflang sin verificar en versión bilingüe — riesgo de contenido duplicado</div>
+        <div class="issue-desc">El sitio tiene versión española (raíz) y versión inglesa (/en/), pero los tags hreflang x-default, es, y en en el head HTML y en el sitemap XML no han sido verificados. Sin hreflang correcto, Google puede interpretar las dos versiones como contenido duplicado, dividiendo el link equity entre ambas versiones y potencialmente penalizando al sitio. También impide que Google muestre la versión correcta por idioma del usuario.</div>
+        <span class="issue-fix">Auditar con Screaming Frog o Ahrefs Site Audit. Añadir correctamente en head: &lt;link rel="alternate" hreflang="es" href="..."&gt; y &lt;link rel="alternate" hreflang="en" href="..."&gt; en AMBAS versiones</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Riesgo</div>
+        <div class="impact-val" style="color: var(--amber);">Medio</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">URLs</span>
+      <div class="issue-body">
+        <div class="issue-title">Categoría de blog "/en/category/sin-categoria-en/" indexada en versión inglesa</div>
+        <div class="issue-desc">La versión en inglés del blog tiene una categoría con nombre en español visible en la URL: /en/category/sin-categoria-en/. Esto indica que la taxonomía del blog no fue migrada correctamente al crear la versión bilingüe. Es una señal negativa para Google sobre la calidad del contenido en inglés y confunde a los visitantes angloparlantes.</div>
+        <span class="issue-fix">Renombrar en WordPress a /en/category/mental-health/ o similar. Configurar redirección 301 desde la URL antigua</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Medio</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Contenido</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin estrategia de contenido orientada a keywords de búsqueda psicológica en Guatemala</div>
+        <div class="issue-desc">El blog "Artículos de valor" existe pero los temas no parecen estar basados en keyword research (ej: "STRESSED? SOCIALIZE!", "EMOTIONS AND RELEASE", "When was the last time you cried"). Nadie en Guatemala busca estos títulos exactos. Las oportunidades reales están en términos como: "psicólogo barato Guatemala", "terapia de pareja Guatemala", "cómo tratar ansiedad Guatemala", "psicólogo infantil zona 5". La diferencia entre contenido informativo y contenido SEO-driven es lo que determina si el blog genera tráfico orgánico.</div>
+        <span class="issue-fix">Keyword research con Semrush/Ahrefs para términos de búsqueda reales en GT. Reformatear mínimo 5 artículos existentes con keywords de alta intención local</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Oportunidad</div>
+        <div class="impact-val" style="color: var(--amber);">Alta</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SEO OFF-PAGE ============ -->
+<section id="seo-off">
+  <div class="section-header">
+    <div class="section-tag">05 — SEO Off-Page & Autoridad de Dominio</div>
+    <h2 class="section-title">Domain Rating 2.3/100 —<br>con perfil de backlinks tóxico activo</h2>
+    <p class="section-desc">Un DR de 2.3 significa que el dominio tiene prácticamente cero autoridad acumulada ante Google. Peor aún: la presencia de múltiples backlinks tóxicos no disavowed puede estar generando una penalización activa que suprime rankings potenciales.</p>
+  </div>
+  <div class="dr-block">
+    <div class="dr-gauge">
+      <div class="dr-num">2.3</div>
+      <div class="dr-label">Domain Rating (Ahrefs)</div>
+      <div class="dr-bar-wrap"><div class="dr-bar"></div></div>
+      <div style="font-size: 11px; color: var(--muted); margin-top: 6px;">Escala 0 → 100</div>
+    </div>
+    <div class="dr-context">
+      <p>Un DR de <strong>2.3/100</strong> significa que adefagua.org tiene mínima autoridad de enlace acumulada. Para contexto: un sitio nuevo recién lanzado empieza en DR 0–5. Con <strong>8 años de trayectoria y 30+ patrocinadores</strong>, el sitio debería estar en el rango DR 20–35 si hubiera habido mínima actividad de linkbuilding. La brecha entre la trayectoria real de la organización y su autoridad digital representa <strong>años de oportunidades perdidas</strong> de posicionamiento orgánico. Cada mes sin estrategia off-page es una ventaja que le ceden a cualquier competidor que comience a trabajar su perfil de enlaces.</p>
+    </div>
+  </div>
+  <div class="toxic-block">
+    <div class="toxic-icon">⚠</div>
+    <div class="toxic-text">
+      <h4>Backlinks tóxicos detectados — penalización activa probable</h4>
+      <p>El perfil de backlinks contiene múltiples enlaces de dominios spam, granjas de links o sitios irrelevantes de bajo valor que los algoritmos de Google Penguin interpretan como señales de manipulación. Sin un proceso de disavow activo en Google Search Console, estos links pueden estar suprimiendo activamente los rankings del sitio para todas las palabras clave objetivo. El primer paso antes de cualquier estrategia de linkbuilding es limpiar el perfil actual: exportar los links tóxicos desde Ahrefs, crear un archivo de disavow y subirlo a Google Search Console.</p>
+    </div>
+  </div>
+  <div class="cat-header">
+    <div class="cat-title">Hallazgos Off-Page</div>
+    <div class="cat-count">5 hallazgos · 3 críticos · 1 alto · 1 positivo</div>
+  </div>
+  <div class="issues">
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Urgente</span>
+      <div class="issue-body">
+        <div class="issue-title">Links tóxicos sin disavow — daño activo al perfil de autoridad</div>
+        <div class="issue-desc">Los backlinks de spam, granjas de links y sitios de baja calidad que apuntan al dominio envían señales negativas a Google. Hasta que se complete el proceso de disavow, cualquier inversión en nuevo contenido o linkbuilding tiene rendimiento reducido porque el algoritmo está penalizando el dominio base. El proceso de disavow no es instantáneo — Google tarda 4–8 semanas en procesar un archivo de disavow, por lo que esto debe ejecutarse cuanto antes.</div>
+        <span class="issue-fix">Paso 1: Exportar backlinks desde Ahrefs → filtrar por Toxic Score alto → crear archivo disavow.txt → subir a Google Search Console</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Urgencia</div>
+        <div class="impact-val" style="color: var(--red);">Inmediata</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Oportunidad</span>
+      <div class="issue-body">
+        <div class="issue-title">33 patrocinadores activos sin backlinks confirmados — link equity no capturado</div>
+        <div class="issue-desc">ADEFAGUA muestra los logos de 33 organizaciones patrocinadoras pero no hay evidencia de que estos dominios enlacen al sitio. Cada uno de estos sponsors tiene un sitio web donde debería existir una mención a ADEFAGUA como organización aliada, incluyendo un link. Si incluso la mitad de ellos tienen DR promedio de 20–30, esto multiplicaría el Domain Rating del sitio varias veces. Es el activo de linkbuilding más infrautilizado y también el más fácil de activar: ya existe una relación establecida.</div>
+        <span class="issue-fix">Contactar a los 33 patrocinadores solicitando una mención/link en su sección de "Aliados" o "Responsabilidad Social". Incluirlo como estándar en futuros acuerdos de sponsorship</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto DR</div>
+        <div class="impact-val" style="color: var(--amber);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">PR Digital</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin estrategia de PR digital ni presencia en medios guatemaltecos</div>
+        <div class="issue-desc">No hay backlinks detectables desde medios de prensa guatemaltecos (Prensa Libre, Nómada, Soy502, El Periódico), universidades con facultades de psicología (USAC, URL, UVG, Mariano Gálvez), organismos internacionales de salud en Guatemala (OPS/OMS Guatemala, PAHO), ni directorios de ONGs reconocidos (GuideStar, Charity Navigator para audiencia de diáspora). Un solo artículo en Nómada o una mención en el portal de salud de la USAC puede aportar más link equity que 20 links de sitios de baja calidad.</div>
+        <span class="issue-fix">Estrategia de PR: 1 comunicado de prensa mensual a redactores de salud de Nómada/Prensa Libre. Registro en directorios de ONGs con DA alto. Colaboraciones de contenido con universidades</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Potencial DR</div>
+        <div class="impact-val" style="color: var(--amber);">+10–20pts</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Redes</span>
+      <div class="issue-body">
+        <div class="issue-title">Perfiles sociales activos pero sin estrategia de amplificación de contenido</div>
+        <div class="issue-desc">Facebook, Instagram y LinkedIn están activos pero sin una estrategia coordinada que dirija tráfico al sitio web y genere señales de marca. Los posts de redes sociales generan engagement pero raramente incluyen links al sitio que construyan autoridad. Tampoco hay evidencia de un programa de earned media donde el contenido del blog sea distribuido activamente en comunidades de salud mental en Guatemala.</div>
+        <span class="issue-fix">Cada artículo del blog debe tener: post en 3 redes + email newsletter + outreach a 2–3 grupos de Facebook de psicología/salud mental en Guatemala</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Medio</div>
+      </div>
+    </div>
+    <div class="issue-card sev-positive">
+      <span class="sev-tag st-positive">Positivo</span>
+      <div class="issue-body">
+        <div class="issue-title">Dominio .org + 8 años de antigüedad — base de confianza sólida</div>
+        <div class="issue-desc">El TLD .org tiene señales de confianza inherentes para organismos sin fines de lucro. Un dominio activo desde 2017 con historial limpio (excepto por los links tóxicos que se deben disavow) es una base sólida. La autoridad del dominio puede crecer significativamente en 6–12 meses con una estrategia activa de linkbuilding, dado que la base técnica no tiene historial de penalizaciones manuales conocidas.</div>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Estado</div>
+        <div class="impact-val" style="color: var(--green);">Optimizar</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ INFORMACIÓN ============ -->
+<section id="info">
+  <div class="section-header">
+    <div class="section-tag">06 — Calidad de Información al Cliente</div>
+    <h2 class="section-title">Información incompleta en los momentos<br>clave del proceso de decisión</h2>
+    <p class="section-desc">Un visitante que llega al sitio buscando apoyo psicológico necesita responder 4 preguntas en menos de 60 segundos. El sitio actual responde solo 2 de las 4 de forma inmediata.</p>
+  </div>
+  <div class="highlight-box">
+    <h4>Las 4 preguntas que todo visitante necesita responder antes de decidir</h4>
+    <p>① ¿Qué tipos de problemas pueden ayudarme? ✓ Respondida &nbsp;|&nbsp; ② ¿Cómo es el proceso de atención? Parcialmente &nbsp;|&nbsp; ③ ¿Dónde y cuándo puedo ir? ✗ Sin horarios &nbsp;|&nbsp; ④ ¿Cómo empiezo a recibir atención? ✗ Sin proceso claro ni agenda online</p>
+  </div>
+  <div class="cat-header">
+    <div class="cat-title">Hallazgos de Información</div>
+    <div class="cat-count">7 hallazgos · 2 críticos · 2 altos · 3 positivos</div>
+  </div>
+  <div class="issues">
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Crítico</span>
+      <div class="issue-body">
+        <div class="issue-title">Sin horarios de atención por clínica — barrera de acceso innecesaria</div>
+        <div class="issue-desc">Se listan 5 clínicas con direcciones completas — excelente. Pero ninguna muestra sus días y horarios de atención. Un potencial consultante necesita saber si puede ir el sábado por la mañana o si la clínica más cercana a su casa atiende en horario compatible con su trabajo. Sin esta información, el visitante tiene que llamar para preguntar horarios antes de poder considerar asistir — esta fricción genera abandono significativo, especialmente en personas que ya tienen resistencia a buscar ayuda psicológica.</div>
+        <span class="issue-fix">Tabla de horarios por clínica en página de Contacto (Lun–Vie 8am–6pm, Sábado 8am–12pm, etc.) y en el footer del sitio</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Abandono est.</div>
+        <div class="impact-val" style="color: var(--red);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-critical">
+      <span class="sev-tag st-critical">Flujo</span>
+      <div class="issue-body">
+        <div class="issue-title">El proceso para obtener una cita no está explicado en ninguna parte visible</div>
+        <div class="issue-desc">¿Debo llamar? ¿Escribir por WhatsApp? ¿Puedo llegar directamente? ¿Hay una evaluación inicial? ¿Cuánto tiempo tarda la primera cita? Ninguna de estas preguntas tiene respuesta visible en el homepage. El menú tiene "Cómo trabajamos" pero este link no aparece en ningún lugar del hero o above-the-fold. Para una persona que está dando el primer paso para buscar ayuda psicológica, la incertidumbre sobre qué va a pasar si contacta es una barrera enorme.</div>
+        <span class="issue-fix">Sección de 3 pasos en homepage: "1. Contáctanos → 2. Evaluación inicial gratuita → 3. Tu primera sesión". Visible sin hacer scroll</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--red);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Donaciones</span>
+      <div class="issue-body">
+        <div class="issue-title">4 plataformas de donación distintas sin explicación del uso de los fondos</div>
+        <div class="issue-desc">xpresspago.com, payzen.lat, PayPal y Hermanas de la Preciosa Sangre — cuatro destinos distintos para donaciones. Para un donante nuevo, esto genera confusión: ¿cuál debo usar?, ¿son lo mismo?, ¿qué hace la organización con mi dinero? Adicionalmente, en ningún lugar se explica cómo se usan los fondos donados: ¿cuántas sesiones financia una donación de Q75?, ¿qué porcentaje va directamente a los pacientes? Esta transparencia es el factor #1 para donantes recurrentes.</div>
+        <span class="issue-fix">Un solo flujo de donación con opciones claras. Añadir: "Con Q75 financias 1 sesión para una persona que no puede pagar". Reporte de impacto de donaciones visible</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Conversión dona</div>
+        <div class="impact-val" style="color: var(--amber);">Bajo</div>
+      </div>
+    </div>
+    <div class="issue-card sev-high">
+      <span class="sev-tag st-high">Social Proof</span>
+      <div class="issue-body">
+        <div class="issue-title">Casos de éxito y testimoniales enterrados en submenú — no visibles en homepage</div>
+        <div class="issue-desc">Existe una página de "Casos de éxito" en el menú de "Actualidad", pero en la homepage no hay un solo testimonio visible. En servicios de salud mental, la prueba social es el factor de conversión más poderoso. La homepage muestra estadísticas ("X sesiones brindadas") pero los números no generan confianza emocional — las historias reales de personas que encontraron ayuda sí lo hacen. Las estadísticas explican la escala; los testimoniales generan la conexión.</div>
+        <span class="issue-fix">2–3 testimoniales en homepage (anonimizados si es necesario). Formato: Nombre/inicial, problema, resultado obtenido. Vincular al resto de casos de éxito</span>
+      </div>
+      <div class="issue-impact">
+        <div class="impact-label">Impacto</div>
+        <div class="impact-val" style="color: var(--amber);">Alto</div>
+      </div>
+    </div>
+    <div class="issue-card sev-positive">
+      <span class="sev-tag st-positive">Positivo</span>
+      <div class="issue-body">
+        <div class="issue-title">5 direcciones de clínicas físicas completas — accesibilidad geográfica clara</div>
+        <div class="issue-desc">Todas las ubicaciones físicas están listadas con dirección detallada incluyendo zona, colonia y referencia. Fundamental para usuarios en distintos puntos de la ciudad.</div>
+      </div>
+      <div class="issue-impact"><div class="impact-label">Estado</div><div class="impact-val" style="color: var(--green);">Mantener</div></div>
+    </div>
+    <div class="issue-card sev-positive">
+      <span class="sev-tag st-positive">Positivo</span>
+      <div class="issue-body">
+        <div class="issue-title">Páginas individuales por servicio + página de FAQ existente</div>
+        <div class="issue-desc">Cada uno de los 6 servicios de psicología tiene su propia URL con descripción. La sección de preguntas frecuentes existe. Esta estructura de contenido es la base correcta para SEO de servicios y para dar información relevante a cada tipo de consultante.</div>
+      </div>
+      <div class="issue-impact"><div class="impact-label">Estado</div><div class="impact-val" style="color: var(--green);">Optimizar</div></div>
+    </div>
+    <div class="issue-card sev-positive">
+      <span class="sev-tag st-positive">Positivo</span>
+      <div class="issue-body">
+        <div class="issue-title">Múltiples canales de contacto — cobertura completa de preferencias del usuario</div>
+        <div class="issue-desc">2 teléfonos + 2 correos + WhatsApp + formulario web + 3 redes sociales. La cobertura multicanal es correcta y reduce la fricción de primer contacto para diferentes perfiles de usuario (quienes prefieren no llamar tienen alternativas).</div>
+      </div>
+      <div class="issue-impact"><div class="impact-label">Estado</div><div class="impact-val" style="color: var(--green);">Mantener</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ ROADMAP ============ -->
+<section id="roadmap">
+  <div class="section-header">
+    <div class="section-tag">07 — Plan de Acción</div>
+    <h2 class="section-title">Roadmap de mejoras<br>por prioridad e impacto</h2>
+    <p class="section-desc">Las acciones están ordenadas por impacto en conversión y SEO. Las de Fase 1 tienen el mayor ROI porque eliminan daños activos al sitio antes de cualquier inversión adicional.</p>
+  </div>
+  <div class="roadmap">
+    <div class="road-card">
+      <div class="road-header">
+        <div class="road-badge rb-red">!</div>
+        <div>
+          <div class="road-phase" style="color: var(--red);">Fase 1 — Daños Activos</div>
+          <div class="road-time">Semana 1–2 · Alta urgencia</div>
+        </div>
+      </div>
+      <div class="road-items">
+        <div class="road-item"><span class="road-num">01</span>Eliminar logo de Revlon del slider</div>
+        <div class="road-item"><span class="road-num">02</span>Corregir title tag con keywords reales</div>
+        <div class="road-item"><span class="road-num">03</span>Crear archivo disavow de backlinks tóxicos y subir a Search Console</div>
+        <div class="road-item"><span class="road-num">04</span>Activar Cloudflare plan gratuito</div>
+        <div class="road-item"><span class="road-num">05</span>Migrar video a YouTube embed con lazy load</div>
+        <div class="road-item"><span class="road-num">06</span>Añadir horarios por clínica en página de Contacto</div>
+      </div>
+    </div>
+    <div class="road-card">
+      <div class="road-header">
+        <div class="road-badge rb-amber">2</div>
+        <div>
+          <div class="road-phase" style="color: var(--amber);">Fase 2 — Fundamentos</div>
+          <div class="road-time">Mes 1–2 · Impacto estructural</div>
+        </div>
+      </div>
+      <div class="road-items">
+        <div class="road-item"><span class="road-num">01</span>Reemplazar sliders por hero estático + secciones visibles</div>
+        <div class="road-item"><span class="road-num">02</span>Implementar Schema markup JSON-LD (Org + 5 LocalBusiness + FAQ)</div>
+        <div class="road-item"><span class="road-num">03</span>Convertir todas las imágenes a WebP con dimensiones definidas</div>
+        <div class="road-item"><span class="road-num">04</span>Definir 1 H1 único por página (empezar por homepage)</div>
+        <div class="road-item"><span class="road-num">05</span>Integrar Calendly para citas online en homepage</div>
+        <div class="road-item"><span class="road-num">06</span>Añadir alt text descriptivo a todas las imágenes de contenido</div>
+      </div>
+    </div>
+    <div class="road-card">
+      <div class="road-header">
+        <div class="road-badge rb-blue">3</div>
+        <div>
+          <div class="road-phase" style="color: var(--blue);">Fase 3 — Crecimiento</div>
+          <div class="road-time">Mes 2–4 · Autoridad y conversión</div>
+        </div>
+      </div>
+      <div class="road-items">
+        <div class="road-item"><span class="road-num">01</span>Rediseño visual con design system (tipografía, espaciados, componentes)</div>
+        <div class="road-item"><span class="road-num">02</span>Fotografía profesional del equipo y clínicas</div>
+        <div class="road-item"><span class="road-num">03</span>Contactar 33 sponsors para solicitar backlinks</div>
+        <div class="road-item"><span class="road-num">04</span>Estrategia de PR digital: Nómada, USAC, OPS Guatemala</div>
+        <div class="road-item"><span class="road-num">05</span>Sección de testimoniales en homepage</div>
+        <div class="road-item"><span class="road-num">06</span>Keyword research + reescritura de 5 artículos del blog</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Auditoría elaborada por <strong>Glenn Ortiz - Frenzy Bits</strong> · adefagua.org · Abril 2026</p>
+  <p style="margin-top: 8px; font-size: 11px;">Datos de rendimiento basados en PageSpeed Insights · Datos de autoridad basados en Ahrefs Domain Rating · Análisis UX y diseño basado en inspección directa del sitio</p>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+});
+
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
